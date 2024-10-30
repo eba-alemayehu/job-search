@@ -1,0 +1,18 @@
+{
+    "dev": {
+        "aws_region": "eu-central-1",
+        "django_settings": "job.settings",
+        "profile_name": "default",
+        "project_name": "job",
+        "runtime": "python3.10",
+        "s3_bucket": "semeon",
+        "timeout_seconds": 300,
+        "slim_handler": true,
+        "events": [
+          {
+            "function": "job.search.find_job",
+            "expression": "rate(5 minutes)"
+          }
+        ]
+    }
+}
