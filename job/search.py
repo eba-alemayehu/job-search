@@ -55,6 +55,7 @@ def search(config, title):
         result = table.scan(
             FilterExpression=Attr('pk').eq(job['pk'])
         )['Items']
+        print(job)
         if len(result) == 0:
             table.put_item(
                 Item=job
