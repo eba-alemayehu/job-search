@@ -13,8 +13,6 @@ RUN pip install -r requirement.txt  --no-build-isolation
 FROM python-builder as app-builder
 COPY . /app
 WORKDIR /app
-
-FROM app-builder as app-start-builder
 COPY ./setup.sh /
 ENV DEBUG false
 

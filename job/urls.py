@@ -164,6 +164,6 @@ urlpatterns = [
     path('save/<str:id>', save),
     path('saved', jobs_saved),
     path('applied', jobs_applied),
-    path('/', jobs_view, name="home"),
+    path('', jobs_view, name="home"),
     path('', jobs_view),
 ]

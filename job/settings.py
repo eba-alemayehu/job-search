@@ -29,7 +29,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',
 
-    'job.jobs'
+    # 'job.jobs'
 ]
 
 MIDDLEWARE = [
