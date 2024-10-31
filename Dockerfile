@@ -1,9 +1,9 @@
 FROM python:3.10-alpine as base-builder
 
 RUN apk update
-RUN apk add python3-dev postgresql-dev libffi-dev g++ gcc musl-dev python3-dev  \
+RUN apk add python3-dev libffi-dev g++ gcc musl-dev python3-dev  \
     libpq-dev py3-setuptools py3-reportlab freetype-dev wget git build-base \
-    mariadb-dev mariadb-connector-c-dev python3 py3-pip wget
+    python3 py3-pip wget
 RUN pip install --upgrade pip
 
 FROM base-builder as python-builder
