@@ -4,7 +4,6 @@ services:
   backend:
     build: ./
     container_name: Django
-    restart: always
     ports:
       - ${BACKEND_PORT}:8000
     volumes:
