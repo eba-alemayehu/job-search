@@ -8,6 +8,13 @@ RUN pip install --upgrade pip
 
 WORKDIR /a
 COPY ./requirement.txt .
+COPY cronfile /etc/cron.d/mycron
+COPY cronjob.sh /cronjob.sh
+
+RUN chmod +x /cronjob.sh
+RUN crontab /etc/cron.d/mycron
+RUN touch /var/log/cron.log
+
 RUN pip install -r requirement.txt  --no-build-isolation
 COPY . .
 CMD ["sh", "./setup.sh"]

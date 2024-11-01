@@ -1,0 +1,2 @@
+cd /a
+git pull
