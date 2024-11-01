@@ -6,17 +6,9 @@ RUN apk add python3-dev libffi-dev g++ gcc musl-dev python3-dev  \
     python3 py3-pip wget
 RUN pip install --upgrade pip
 
-FROM base-builder as python-builder
+WORKDIR /a
 COPY ./requirement.txt .
 RUN pip install -r requirement.txt  --no-build-isolation
-
-FROM python-builder as app-builder
-COPY . /app
-WORKDIR /app
-COPY ./setup.sh /
-ENV DEBUG false
-
-RUN printenv
-
-CMD ["sh", "/setup.sh"]
+COPY . .
+CMD ["sh", "./setup.sh"]
 RUN echo "Done!"
