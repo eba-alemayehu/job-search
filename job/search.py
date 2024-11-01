@@ -8,6 +8,9 @@ from boto3.dynamodb.conditions import Key
 from boto3.dynamodb.conditions import Attr
 from zappa.asynchronous import task
 
+from job.jobs.models import JobListing
+
+
 # @task
 def search(config, title):
     jobs = scrape_jobs(
@@ -57,9 +60,7 @@ def search(config, title):
         )['Items']
         print(job)
         if len(result) == 0:
-            table.put_item(
-                Item=job
-            )
+            job_listing = JobListing.objects.create(**job)
     return jobs
 
 

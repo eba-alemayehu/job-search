@@ -25,6 +25,7 @@ class JobSearch(models.Model):
 
 
 class JobListing(models.Model):
+    primary_key = models.CharField(max_length=100)
     job_search = models.ForeignKey(JobSearch, on_delete=models.CASCADE, null=True, blank=True)
     job_filter = models.ForeignKey(JobFilter, on_delete=models.CASCADE, null=True, blank=True)
     job_id = models.CharField(max_length=20, primary_key=True)
