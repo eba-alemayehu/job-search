@@ -5,46 +5,14 @@ from django.shortcuts import redirect
 from boto3.dynamodb.conditions import Attr
 from django.contrib.humanize.templatetags import humanize
 import boto3, datetime
+from job.jobs import models
 
 
 def delete_dynamodb_item(table_name, item_id):
-    dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
-    table = dynamodb.Table(table_name)
-
-    try:
-        # Perform the delete operation
-        response = table.delete_item(
-            Key={'id': item_id},  # Replace 'id' with the name of your partition key
-            ReturnValues="ALL_OLD"  # Return the deleted item attributes
-        )
-        return response.get('Attributes', {})  # Return the deleted item attributes if any
-
-    except Exception as e:
-        return {'error': str(e)}  # Return error message if any exception occurs
-
+    models.JobListing.objects.filter(id=item_id).delete()
 
 def update_dynamodb_item(table_name, item_id, update_data):
-    dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
-    table = dynamodb.Table(table_name)
-
-    # Construct UpdateExpression and ExpressionAttributeValues
-    update_expression = "SET " + ", ".join(f"#{k} = :{k}" for k in update_data.keys())
-    expression_attribute_names = {f"#{k}": k for k in update_data.keys()}
-    expression_attribute_values = {f":{k}": v for k, v in update_data.items()}
-
-    try:
-        # Perform the update operation
-        response = table.update_item(
-            Key={'id': item_id},
-            UpdateExpression=update_expression,
-            ExpressionAttributeNames=expression_attribute_names,
-            ExpressionAttributeValues=expression_attribute_values,
-            ReturnValues="UPDATED_NEW"
-        )
-        return response.get('Attributes', {})  # Return updated attributes
-
-    except Exception as e:
-        return {'error': str(e)}  # Return error message
+    return models.JobListing.objects.filter(id=item_id).update(**update_data)
 
 
 def map_items(item):
@@ -54,41 +22,20 @@ def map_items(item):
 
 
 def get_all_items(key, applid, saved=None):
-    dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
-    table = dynamodb.Table('jobs')
-    filter = None
+    jobs = models.JobListing.objects
 
     if key is not None:
-        filter = Attr('company').contains(key.lower())
+        jobs = jobs.filter(company__icontains = key.lower())
 
     if applid is not None:
-        if filter is not None:
-            filter = filter | Attr('is_applied').eq(True)
-        else:
-            filter = Attr('is_applied').eq(True)
+        jobs = jobs.filter(is_applied=True)
 
     if saved is not None:
-        if filter is not None:
-            filter = filter | Attr('is_saved').eq(True)
-        else:
-            filter = Attr('is_saved').eq(True)
+        jobs = jobs.filter(is_saved=True)
 
-    if filter is not None:
-        response = table.scan(
-                FilterExpression=filter
-        )
-    else:
-        response = table.scan()
+    jobs = jobs.order_by('-date')
 
-    items = response.get('Items', [])
-    items = sorted(items, key=lambda x: x['_date'], reverse=True)
-
-    while 'LastEvaluatedKey' in response:
-        response = table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
-        items.extend(response.get('Items', []))
-    items = list(map(lambda e: map_items(e), items))
-    print(items)
-    return items
+    return jobs
 
 
 def jobs_view(request):

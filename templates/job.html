@@ -30,7 +30,7 @@
 <body>
 <div class="container mt-5">
 <h3>Jobs</h3>
-    <form class="form-inline" action="/dev">
+    <form class="form-inline" action="">
         <div>
             <div class="row" style="margin: 1em 0">
                 <div class="col-md-10" style="margin-bottom: 12px;">
@@ -52,11 +52,11 @@
 {#                <div class="col-md-2" style="margin-bottom: 8px;">#}
 {#                    <div>#}
 {#                        {% if applied == None %}#}
-{#                            <a class="btn btn-success"  style="width: 100%"  href="/dev/?key={{ key }}&applied=true">#}
+{#                            <a class="btn btn-success"  style="width: 100%"  href="/?key={{ key }}&applied=true">#}
 {#                                Only applied#}
 {#                            </a>#}
 {#                        {% else %}#}
-{#                            <a class="btn btn-secondary"  style="width: 100%"  href="/dev/?key={{ key }}">#}
+{#                            <a class="btn btn-secondary"  style="width: 100%"  href="/?key={{ key }}">#}
 {#                                All jobs#}
 {#                            </a>#}
 {#                        {% endif %}#}
@@ -81,13 +81,13 @@
 {#            </tr>#}
     <ul class="nav nav-tabs">
       <li class="nav-item">
-        <a class="nav-link {% if request.path == '/' %}active{% endif %}" aria-current="page" href="/dev/">All</a>
+        <a class="nav-link {% if request.path == '/' %}active{% endif %}" aria-current="page" href="/">All</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link {% if request.path == '/applied'  %}active{% endif %}" href="/dev/applied">Mark as <applied></applied></a>
+        <a class="nav-link {% if request.path == '/applied'  %}active{% endif %}" href="/applied">Mark as <applied></applied></a>
       </li>
     <li class="nav-item">
-        <a class="nav-link {% if request.path == '/saved'  %}active{% endif %}" href="/dev/saved">Saved</a>
+        <a class="nav-link {% if request.path == '/saved'  %}active{% endif %}" href="/saved">Saved</a>
       </li>
     </ul>
             {% for job in jobs %}
@@ -118,15 +118,15 @@
 
                         <div class="d-flex flex-row align-items-center justify-content-end" style="gap: 8px">
                             {% if not job.is_applied %}
-                                <div><a type="button" class="btn btn-light" href="/dev/apply/{{ job.id }}">Mark as applied</a></div>
+                                <div><a type="button" class="btn btn-light" href="/apply/{{ job.id }}">Mark as applied</a></div>
                             {% else %}
                                 <div style="color: green">APPLIED</div>
                             {% endif %}
                             <div style="color: darkred">
-                                <a type="button" class="btn btn-light" href="/dev/delete/{{ job.id }}"><i class="fas fa-trash"></i></a>
+                                <a type="button" class="btn btn-light" href="/delete/{{ job.id }}"><i class="fas fa-trash"></i></a>
                             </div>
                              <div style="color: darkred">
-                                <a type="button" class="btn btn-light" href="/dev/save/{{ job.id }}"><i class="{% if job.is_saved %}fas {% else %}fa-regular{% endif %} fa-bookmark"></i></a>
+                                <a type="button" class="btn btn-light" href="/save/{{ job.id }}"><i class="{% if job.is_saved %}fas {% else %}fa-regular{% endif %} fa-bookmark"></i></a>
                             </div>
                         </div>
 

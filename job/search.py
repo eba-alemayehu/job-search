@@ -4,6 +4,7 @@ from jobspy import scrape_jobs
 import boto3
 from decimal import Decimal
 import yaml
+from django.db.models import Q
 from boto3.dynamodb.conditions import Key
 from boto3.dynamodb.conditions import Attr
 from zappa.asynchronous import task
@@ -16,8 +17,8 @@ def search(config, title):
     jobs = scrape_jobs(
         site_name=["indeed", "linkedin", "zip_recruiter", "glassdoor"],
         search_term=title,
-        results_wanted=200,
-        hours_old=78,
+        results_wanted=10,
+        hours_old=2,
         country_indeed='USA',
         is_remote=True
     )
@@ -27,7 +28,7 @@ def search(config, title):
         jobs = list(filter(lambda e: company != e['company'] and e['is_remote'] is True, jobs))
 
     dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
-    table = dynamodb.Table('jobs')
+
     for job in jobs:
         job['date'] = datetime.datetime.now()
         job['_date'] = job['date'].timestamp()
@@ -55,11 +56,19 @@ def search(config, title):
                     job[x] = None
             elif isinstance(job[x], datetime.date):
                 job[x] = job[x].strftime("%Y-%m-%d %H:%M:%S")
-        result = table.scan(
-            FilterExpression=Attr('pk').eq(job['pk'])
-        )['Items']
+
         print(job)
-        if len(result) == 0:
+        if not JobListing.objects.filter(primary_key=job['pk']).exists():
+            del job['pk']
+            del job['_date']
+            del job['_date_posted']
+            del job['company_revenue']
+            if job.get('id') is not None:
+                job['job_id'] = job.pop('id')
+            job['date'] = datetime.datetime.strptime(job.pop('date'), '%Y-%m-%d %H:%M:%S')
+            job['date_posted'] = datetime.datetime.strptime(job.pop('date_posted'), '%Y-%m-%d %H:%M:%S')
+
+            print(job.get('id'))
             job_listing = JobListing.objects.create(**job)
     return jobs
 
