@@ -20,7 +20,7 @@ RUN chmod +x /cronjob.sh
 RUN crontab /etc/cron.d/mycron
 RUN touch /var/log/cron.log
 
-RUN pip install -r requirement.txt  --no-build-isolation
+RUN pip install -r requirement.txt  --no-build-isolation --break-system-packages
 COPY . .
 CMD ["sh", "./setup.sh"]
 RUN echo "Done!"
