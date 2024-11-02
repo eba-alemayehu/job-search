@@ -1,10 +1,16 @@
-FROM i386/alpine:latest
+# Start from an Ubuntu image
+FROM ubuntu:latest
 
-# Install Python and dependencies
-RUN apk update
-RUN apk add python3 py3-pip python3-dev libffi-dev g++ gcc musl-dev \
-    libpq-dev py3-setuptools py3-reportlab freetype-dev wget git build-base \
-    python3 py3-pip wget
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+
+# Install Python and pip
+RUN apt update && \
+    apt install -y python3 python3-pip python3-dev libffi-dev g++ gcc musl-dev && \
+    apt install -y libpq-dev py3-setuptools py3-reportlab freetype-dev wget git build-base && \
+    apt install -y python3 py3-pip wget && \
+    apt clean
+
 RUN pip install --upgrade pip
 
 WORKDIR /a
