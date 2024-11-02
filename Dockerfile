@@ -1,6 +1,8 @@
-FROM python:3.10-alpine as base-builder
+FROM i386/alpine:latest
 
-RUN apk update
+# Install Python and dependencies
+RUN apk update && \
+    apk add --no-cache python3 py3-pip
 RUN apk add python3-dev libffi-dev g++ gcc musl-dev \
     libpq-dev py3-setuptools py3-reportlab freetype-dev wget git build-base \
     python3 py3-pip wget
