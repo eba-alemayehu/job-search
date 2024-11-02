@@ -36,7 +36,7 @@ def get_all_items(key, applid, saved=None, is_filtered=False):
     if is_filtered is True:
         jobs = jobs.filter(job_filter__isnull=True)
 
-    jobs = jobs.order_by('-date')
+    jobs = jobs.order_by('-created_at')
 
     return jobs
 
