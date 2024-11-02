@@ -8,8 +8,7 @@ ENV PYTHONUNBUFFERED=1
 RUN apt update && \
     apt install -y python3 python3-pip python3-dev libffi-dev g++ gcc musl-dev && \
     apt install -y libpq-dev py3-setuptools py3-reportlab freetype-dev wget git build-base && \
-    apt install -y python3 py3-pip wget && \
-    apt clean
+    apt install -y python3 py3-pip wget
 
 RUN pip install --upgrade pip
 
