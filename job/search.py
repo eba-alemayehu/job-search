@@ -9,16 +9,16 @@ from boto3.dynamodb.conditions import Key
 from boto3.dynamodb.conditions import Attr
 from zappa.asynchronous import task
 
-from job.jobs.models import JobListing
+from job.jobs.models import JobListing, JobSearch, JobFilter
 
 
 # @task
-def search(config, title):
+def search(config, title, job_search, filters):
     jobs = scrape_jobs(
         site_name=["indeed", "linkedin", "zip_recruiter", "glassdoor"],
         search_term=title,
         results_wanted=10,
-        hours_old=2,
+        hours_old=600,
         country_indeed='USA',
         is_remote=True
     )
@@ -31,23 +31,9 @@ def search(config, title):
 
     for job in jobs:
         job['date'] = datetime.datetime.now()
-        job['_date'] = job['date'].timestamp()
-        job['pk'] = f"{job['date_posted']}-{job['company']}-{job['title']}"
-        # print(job['date'])
-        print(job['title'].lower())
-        print(list(map(lambda e: e.lower(), config['title'])))
-        print("####################")
-        if len(list(filter(lambda e: e.lower() in job['title'].lower(), config['title']))) == 0:
-            print("Title not found")
-            continue
-        if ('hybrid' in str(job['description']).lower() or
-                'citizen' in str(job['description']).lower() or
-                'security clearance' in str(job['description']).lower()):
-            continue
-
-        print("*******************")
+        job['job_search'] = job_search
+        job['job_id'] = f"{job['date_posted']}-{job['company']}-{job['title']}"
         job['company'] = str(job['company']).lower()
-        job['_date_posted'] = datetime.datetime.combine(job['date_posted'], datetime.datetime.min.time()).timestamp()
 
         for x in job:
             if isinstance(job[x], float):
@@ -57,19 +43,27 @@ def search(config, title):
             elif isinstance(job[x], datetime.date):
                 job[x] = job[x].strftime("%Y-%m-%d %H:%M:%S")
 
-        print(job)
-        if not JobListing.objects.filter(primary_key=job['pk']).exists():
-            del job['pk']
-            del job['_date']
-            del job['_date_posted']
+        if not JobListing.objects.filter(primary_key=job['job_id']).exists():
+            del job['id']
             del job['company_revenue']
-            if job.get('id') is not None:
-                job['job_id'] = job.pop('id')
+
             job['date'] = datetime.datetime.strptime(job.pop('date'), '%Y-%m-%d %H:%M:%S')
             job['date_posted'] = datetime.datetime.strptime(job.pop('date_posted'), '%Y-%m-%d %H:%M:%S')
 
-            print(job.get('id'))
+            job['job_filter'] = None
+            for f in filters:
+                if f.filter_type == 'IGNOR_ALL' and f.key_word.lower() in job['title'].lower() or \
+                        f.key_word.lower() in job['description'].lower():
+                    job['job_filter']  = f
+                elif f.filter_type == 'IGNOR_FROM_TITLE' and f.key_word.lower() in job['title'].lower():
+                    job['job_filter']  = f
+                elif f.filter_type == 'IGNOR_FROM_DESCRIPTION' and f.key_word.lower() in job['description'].lower():
+                    job['job_filter']  = f
+                elif f.filter_type == 'COMPANY_NAME' and f.key_word.lower() in job['company'].lower():
+                    job['job_filter'] = f
+
             job_listing = JobListing.objects.create(**job)
+            print(job_listing)
     return jobs
 
 
@@ -78,8 +72,9 @@ def find_job():
         config = yaml.safe_load(file)
 
     jobs = []
-    for title in config['title']:
-        jobs += search(config, title)
+    filters = JobFilter.objects.all()
+    for job_search in JobSearch.objects.all():
+        jobs += search(config, job_search.key_word, job_search, filters)
 
     print("Item inserted successfully!")
 

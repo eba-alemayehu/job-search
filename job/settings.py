@@ -28,8 +28,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    # other apps
+    'django_crontab',
 
     'job.jobs'
+]
+
+CRONJOBS = [
+    ('*/60 * * * *', 'job.search.find_job'),  # Run every 5 minutes
 ]
 
 MIDDLEWARE = [

@@ -7,7 +7,8 @@ class JobFilter(models.Model):
     FILTER_TYPE = Choices(
         ('IGNOR_ALL', _('IGNOR_ALL')),
         ('IGNOR_FROM_TITLE', _('IGNOR_FROM_TITLE')),
-        ('IGNOR_FROM_DESCRIPTION', _('IGNOR_FROM_TITLE')),
+        ('IGNOR_FROM_DESCRIPTION', _('IGNOR_FROM_DESCRIPTION')),
+        ('COMPANY_NAME', _('COMPANY_NAME')),
     )
 
     key_word = models.CharField(max_length=255)
@@ -44,6 +45,7 @@ class JobListing(models.Model):
     currency = models.CharField(max_length=10, null=True, blank=True)
     is_remote = models.BooleanField(default=False)
     is_saved = models.BooleanField(default=False)
+    is_applied = models.BooleanField(default=False)
     job_level = models.CharField(max_length=50, null=True, blank=True)
     job_function = models.CharField(max_length=50, null=True, blank=True)
     company_industry = models.CharField(max_length=100, null=True, blank=True)

@@ -21,7 +21,7 @@ def map_items(item):
     return item
 
 
-def get_all_items(key, applid, saved=None):
+def get_all_items(key, applid, saved=None, is_filtered=False):
     jobs = models.JobListing.objects
 
     if key is not None:
@@ -33,6 +33,9 @@ def get_all_items(key, applid, saved=None):
     if saved is not None:
         jobs = jobs.filter(is_saved=True)
 
+    if is_filtered is True:
+        jobs = jobs.filter(job_filter__isnull=True)
+
     jobs = jobs.order_by('-date')
 
     return jobs
@@ -41,10 +44,29 @@ def get_all_items(key, applid, saved=None):
 def jobs_view(request):
     key = request.GET.get('key', None)
     applied = request.GET.get('applied', None)
+    search_keys = models.JobSearch.objects.all()
+    filter_keys = models.JobFilter.objects.all()
     context = {
-        "jobs": get_all_items(key, applied),
+        "jobs": get_all_items(key, applied, is_filtered=True),
         "key": key,
-        "applied": applied
+        "applied": applied,
+        "search_keys": search_keys,
+        "filter_keys": filter_keys
+    }
+    return render(request, 'job.html', context)
+
+
+def all_jobs(request):
+    key = request.GET.get('key', None)
+    applied = request.GET.get('applied', None)
+    search_keys = models.JobSearch.objects.all()
+    filter_keys = models.JobFilter.objects.all()
+    context = {
+        "jobs": get_all_items(key, applied, is_filtered=False),
+        "key": key,
+        "applied": applied,
+        "search_keys": search_keys,
+        "filter_keys": filter_keys
     }
     return render(request, 'job.html', context)
 
@@ -104,13 +126,41 @@ def save(request, id):
     return redirect('home')
 
 
+def add_job_search_key(request):
+    key = request.POST.get('job_search_key', None)
+    job_search = models.JobSearch.objects.create(key_word=key)
+    return redirect('home')
+
+def add_job_filter_key(request):
+    key = request.POST.get('job_filter_key', None)
+    filter_type = request.POST.get('filter_type', None)
+    job_search = models.JobFilter.objects.create(key_word=key, filter_type=filter_type)
+    return redirect('home')
+
+def delete_key_word(request, id):
+    job_search = models.JobSearch.objects.get(id=id)
+    job_search.delete()
+    return redirect('home')
+
+
+def delete_filter_key_word(request, id):
+    job_search = models.JobFilter.objects.get(id=id)
+    job_search.delete()
+    return redirect('home')
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('apply/<str:id>', apply),
     path('delete/<str:id>', delete),
+    path('delete_key_word/<str:id>', delete_key_word),
+    path('delete_filter_key_word/<str:id>', delete_filter_key_word),
     path('save/<str:id>', save),
     path('saved', jobs_saved),
     path('applied', jobs_applied),
+    path('add_job_search_key', add_job_search_key),
+    path('add_job_filter_key', add_job_filter_key),
+    path('all', all_jobs, name="all"),
     path('', jobs_view, name="home"),
     path('', jobs_view),
 ]
