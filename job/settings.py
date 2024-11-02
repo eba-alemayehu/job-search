@@ -35,7 +35,7 @@ INSTALLED_APPS = [
 ]
 
 CRONJOBS = [
-    ('*/60 * * * *', 'job.search.find_job'),  # Run every 5 minutes
+    ('*/2 * * * *', 'job.search.find_job'),  # Run every 5 minutes
 ]
 
 MIDDLEWARE = [
