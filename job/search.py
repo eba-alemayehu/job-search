@@ -52,14 +52,14 @@ def search(config, title, job_search, filters):
 
             job['job_filter'] = None
             for f in filters:
-                if f.filter_type == 'IGNOR_ALL' and f.key_word.lower() in job['title'].lower() or \
-                        f.key_word.lower() in job['description'].lower():
-                    job['job_filter']  = f
-                elif f.filter_type == 'IGNOR_FROM_TITLE' and f.key_word.lower() in job['title'].lower():
-                    job['job_filter']  = f
-                elif f.filter_type == 'IGNOR_FROM_DESCRIPTION' and f.key_word.lower() in job['description'].lower():
-                    job['job_filter']  = f
-                elif f.filter_type == 'COMPANY_NAME' and f.key_word.lower() in job['company'].lower():
+                if f.filter_type == 'IGNOR_ALL' and job.get('title') and f.key_word.lower() in job['title'].lower() or \
+                        job.get('description') and f.key_word.lower() in job['description'].lower():
+                    job['job_filter'] = f
+                elif f.filter_type == 'IGNOR_FROM_TITLE' and job.get('title') and f.key_word.lower() in job['title'].lower():
+                    job['job_filter'] = f
+                elif f.filter_type == 'IGNOR_FROM_DESCRIPTION' and job.get('description') and f.key_word.lower() in job['description'].lower():
+                    job['job_filter'] = f
+                elif f.filter_type == 'COMPANY_NAME'  and job.get('company') and f.key_word.lower() in job['company'].lower():
                     job['job_filter'] = f
 
             job_listing = JobListing.objects.create(**job)
