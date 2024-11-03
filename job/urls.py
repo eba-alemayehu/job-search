@@ -33,8 +33,8 @@ def get_all_items(key, applid, saved=None, is_filtered=False):
     if saved is not None:
         jobs = jobs.filter(is_saved=True)
 
-    # if is_filtered is True:
-    #     jobs = jobs.filter(job_filter__isnull=True)
+    if is_filtered is True:
+        jobs = jobs.filter(job_filter__isnull=True)
 
     jobs = jobs.order_by('-created_at')
 
