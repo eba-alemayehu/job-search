@@ -122,9 +122,14 @@
                     <small>{{ job.date_posted|slice:":10" }}</small>
                 <div style="display: flex; flex-flow: row; gap: 1.5em">
                     <i><small class="text-capitalize text-secondary">Search
-                        key: {{ job.job_search.key_word }}</small></i>
+                        key: <span class="badge text-bg-secondary">{{ job.job_search.key_word }}</span></small></i>
                     <i><small class="text-capitalize text-secondary"
-                              style="color: orange">Filter: {{ job.job_filter.key_word }}</small></i>
+                              style="color: orange">Filter:
+                        {% if not job.job_filter %}
+                        <span class="badge text-bg-secondary" style="background-color: #3A7734 !important">No filter: Eligible</span></small></i>
+                    {% else %}
+                            <span class="badge text-bg-warning">{{ job.job_filter.key_word }}</span></small></i>
+                    {% endif %}
                 </div>
 
                     {#            <td>{{ job.position }}</td>#}
