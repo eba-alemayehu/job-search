@@ -128,7 +128,7 @@
                         {% if not job.job_filter %}
                         <span class="badge text-bg-secondary" style="background-color: #3A7734 !important">No filter: Eligible</span></small></i>
                     {% else %}
-                            <span class="badge text-bg-warning">{{ job.job_filter.key_word }}</span></small></i>
+                            <span class="badge text-bg-warning">{{ job.job_filter.key_word }} {{ job.job_filter.filter_type }}</span></small></i>
                     {% endif %}
                 </div>
 
