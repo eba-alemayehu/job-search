@@ -61,6 +61,8 @@ def search(config, title, job_search, filters):
                     job['job_filter'] = f
                 elif f.filter_type == 'COMPANY_NAME'  and job.get('company') and f.key_word.lower() in job['company'].lower():
                     job['job_filter'] = f
+                elif f.filter_type == 'KEY_WORD_NOT_IN_TITLE' and job.get('title') is not None and title.lower() not in job['title'].lower():
+                    job['job_filter'] = f
 
             job_listing = JobListing.objects.create(**job)
             print(job_listing)

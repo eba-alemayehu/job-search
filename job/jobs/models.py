@@ -9,6 +9,7 @@ class JobFilter(models.Model):
         ('IGNOR_FROM_TITLE', _('IGNOR_FROM_TITLE')),
         ('IGNOR_FROM_DESCRIPTION', _('IGNOR_FROM_DESCRIPTION')),
         ('COMPANY_NAME', _('COMPANY_NAME')),
+        ('KEY_WORD_NOT_IN_TITLE', _('KEY_WORD_NOT_IN_TITLE'))
     )
 
     key_word = models.CharField(max_length=255)
