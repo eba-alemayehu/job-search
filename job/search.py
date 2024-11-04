@@ -18,7 +18,7 @@ def search(config, title, job_search, filters):
         site_name=["indeed", "linkedin", "zip_recruiter", "glassdoor"],
         search_term=title,
         results_wanted=100,
-        hours_old=30,
+        hours_old=1,
         country_indeed='USA',
         is_remote=True
     )
