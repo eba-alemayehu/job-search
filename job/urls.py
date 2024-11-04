@@ -51,7 +51,7 @@ def jobs_view(request):
     search_keys = models.JobSearch.objects.all()
     filter_keys = models.JobFilter.objects.all()
     context = {
-        "jobs": get_all_items(key, applied, is_filtered=True, id_remote=True),
+        "jobs": get_all_items(key, applied, is_filtered=True, is_remote=True),
         "key": key,
         "applied": applied,
         "search_keys": search_keys,
