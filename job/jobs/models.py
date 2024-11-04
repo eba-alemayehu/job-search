@@ -16,7 +16,7 @@ class JobFilter(models.Model):
     filter_type = models.CharField(choices=FILTER_TYPE, max_length=255)
 
     def __str__(self):
-        return self.key_word
+        return "{} - {}".format(self.key_word, self.filter_type)
 
 
 class JobSearch(models.Model):

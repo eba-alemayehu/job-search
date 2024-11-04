@@ -6,6 +6,7 @@ from boto3.dynamodb.conditions import Attr
 from django.contrib.humanize.templatetags import humanize
 import boto3, datetime
 from job.jobs import models
+from job.search import find_job
 
 
 def delete_dynamodb_item(table_name, item_id):
@@ -149,6 +150,11 @@ def delete_filter_key_word(request, id):
     return redirect('home')
 
 
+def _find_job(request):
+    find_job()
+    return redirect('home')
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('apply/<str:id>', apply),
@@ -160,6 +166,7 @@ urlpatterns = [
     path('applied', jobs_applied),
     path('add_job_search_key', add_job_search_key),
     path('add_job_filter_key', add_job_filter_key),
+    path('find_job', _find_job),
     path('all', all_jobs, name="all"),
     path('', jobs_view, name="home"),
     path('', jobs_view),

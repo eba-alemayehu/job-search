@@ -17,17 +17,13 @@ def search(config, title, job_search, filters):
     jobs = scrape_jobs(
         site_name=["indeed", "linkedin", "zip_recruiter", "glassdoor"],
         search_term=title,
-        results_wanted=10,
-        hours_old=3,
+        results_wanted=100,
+        hours_old=30,
         country_indeed='USA',
         is_remote=True
     )
     print(f"Found {len(jobs)} jobs")
     jobs = jobs.to_dict(orient='records')
-    for company in config['excluded_companies']:
-        jobs = list(filter(lambda e: company != e['company'] and e['is_remote'] is True, jobs))
-
-    dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
 
     for job in jobs:
         job['date'] = datetime.datetime.now()
@@ -48,12 +44,23 @@ def search(config, title, job_search, filters):
             del job['company_revenue']
 
             job['date'] = datetime.datetime.strptime(job.pop('date'), '%Y-%m-%d %H:%M:%S')
-            job['date_posted'] = datetime.datetime.strptime(job.pop('date_posted'), '%Y-%m-%d %H:%M:%S')
+            if job.get('date_posted'):
+                job['date_posted'] = datetime.datetime.strptime(job.pop('date_posted'), '%Y-%m-%d %H:%M:%S')
+            else:
+                job['date_posted'] = job['date']
 
             job['job_filter'] = None
+            if job.get('title').lower() == 'Database Development Internship - Summer 2025 (Remote)'.lower():
+                print('hello')
+
+            if job.get('is_remote') is None:
+                job['is_remote'] = False
+            if job.get('description') is None:
+                job['description'] = '';
+
             for f in filters:
-                if f.filter_type == 'IGNOR_ALL' and job.get('title') and f.key_word.lower() in job['title'].lower() or \
-                        job.get('description') and f.key_word.lower() in job['description'].lower():
+                if f.filter_type == 'IGNOR_ALL' and (job.get('title') and f.key_word.lower() in job['title'].lower() or \
+                        job.get('description') and f.key_word.lower() in job['description'].lower()):
                     job['job_filter'] = f
                 elif f.filter_type == 'IGNOR_FROM_TITLE' and job.get('title') and f.key_word.lower() in job['title'].lower():
                     job['job_filter'] = f
