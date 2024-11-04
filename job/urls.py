@@ -22,7 +22,7 @@ def map_items(item):
     return item
 
 
-def get_all_items(key, applid, saved=None, is_filtered=False):
+def get_all_items(key, applid, saved=None, is_filtered=False, is_remote=None):
     jobs = models.JobListing.objects
 
     if key is not None:
@@ -37,6 +37,9 @@ def get_all_items(key, applid, saved=None, is_filtered=False):
     if is_filtered is True:
         jobs = jobs.filter(job_filter__isnull=True)
 
+    if is_remote is True:
+        jobs = jobs.filter(is_remote=True)
+
     jobs = jobs.order_by('-created_at')
 
     return jobs
@@ -48,7 +51,7 @@ def jobs_view(request):
     search_keys = models.JobSearch.objects.all()
     filter_keys = models.JobFilter.objects.all()
     context = {
-        "jobs": get_all_items(key, applied, is_filtered=True),
+        "jobs": get_all_items(key, applied, is_filtered=True, id_remote=True),
         "key": key,
         "applied": applied,
         "search_keys": search_keys,
