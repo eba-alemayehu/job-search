@@ -94,7 +94,7 @@ def jobs_applied(request):
 def jobs_saved(request):
     key = request.GET.get('key', None)
     context = {
-        "jobs": get_all_items(key, None, True, request),
+        "jobs": get_all_items(key, None, request),
         "key": key,
         "is_saved": True
     }
