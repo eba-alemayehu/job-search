@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 from django.shortcuts import render
+from django.core.paginator import Paginator
 from django.shortcuts import redirect
 from boto3.dynamodb.conditions import Attr
 from django.contrib.humanize.templatetags import humanize
@@ -22,7 +23,7 @@ def map_items(item):
     return item
 
 
-def get_all_items(key, applid, saved=None, is_filtered=False, is_remote=None):
+def get_all_items(key, applid, request,  saved=None, is_filtered=False, is_remote=None):
     jobs = models.JobListing.objects
 
     if key is not None:
@@ -42,7 +43,12 @@ def get_all_items(key, applid, saved=None, is_filtered=False, is_remote=None):
 
     jobs = jobs.order_by('-created_at')
 
-    return jobs.first(50)
+    paginator = Paginator(jobs, 10)  # Show 10 objects per page
+
+    # Get the current page number from the URL
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return page_obj
 
 
 def jobs_view(request):
@@ -51,7 +57,7 @@ def jobs_view(request):
     search_keys = models.JobSearch.objects.all()
     filter_keys = models.JobFilter.objects.all()
     context = {
-        "jobs": get_all_items(key, applied, is_filtered=True, is_remote=True),
+        "jobs": get_all_items(key, applied, request, is_filtered=True, is_remote=True),
         "key": key,
         "applied": applied,
         "search_keys": search_keys,
@@ -66,7 +72,7 @@ def all_jobs(request):
     search_keys = models.JobSearch.objects.all()
     filter_keys = models.JobFilter.objects.all()
     context = {
-        "jobs": get_all_items(key, applied, is_filtered=False),
+        "jobs": get_all_items(key, applied, request, is_filtered=False),
         "key": key,
         "applied": applied,
         "search_keys": search_keys,
@@ -78,7 +84,7 @@ def all_jobs(request):
 def jobs_applied(request):
     key = request.GET.get('key', None)
     context = {
-        "jobs": get_all_items(key, True),
+        "jobs": get_all_items(key, True, request),
         "key": key,
         "applied": True
     }
@@ -88,7 +94,7 @@ def jobs_applied(request):
 def jobs_saved(request):
     key = request.GET.get('key', None)
     context = {
-        "jobs": get_all_items(key, None, True),
+        "jobs": get_all_items(key, None, True, request),
         "key": key,
         "is_saved": True
     }
