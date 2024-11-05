@@ -42,7 +42,7 @@ def get_all_items(key, applid, saved=None, is_filtered=False, is_remote=None):
 
     jobs = jobs.order_by('-created_at')
 
-    return jobs
+    return jobs.first(50)
 
 
 def jobs_view(request):
