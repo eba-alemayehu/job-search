@@ -81,7 +81,5 @@ class JobListing(models.Model):
         elif domain == 'www.linkedin.com':
             return 'https://www.vhv.rs/dpng/d/405-4051803_linkedin-logo-png-linkedin-logo-2020-png-transparent.png'
 
-
-
     def __str__(self):
         return f"{self.title} at {self.company}"
