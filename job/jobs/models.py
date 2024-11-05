@@ -73,7 +73,7 @@ class JobListing(models.Model):
     def get_logo(self):
         parsed_url = urlparse(self.job_url)
         domain = parsed_url.netloc
-
+        return domain
         if domain == 'www.indeed.com':
             return 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Indeed_logo.png/800px-Indeed_logo.png'
         elif domain == 'www.glassdoor.com':
