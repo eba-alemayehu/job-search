@@ -1,3 +1,5 @@
+from urllib.parse import urlparse
+
 from django.db import models
 from model_utils import Choices
 from django.utils.translation import gettext as _
@@ -66,6 +68,20 @@ class JobListing(models.Model):
     date = models.DateTimeField()
     date_posted = models.DateTimeField()
     created_at = models.DateTimeField(auto_now=True)
+
+    @property
+    def get_logo(self):
+        parsed_url = urlparse(self.job_url)
+        domain = parsed_url.netloc
+
+        if domain == 'www.indeed.com':
+            return 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Indeed_logo.png/800px-Indeed_logo.png'
+        elif domain == 'www.glassdoor.com':
+            return 'https://careers.toaglobal.com/wp-content/uploads/2024/05/Glassdoor-Logo-1-1024x328.webp'
+        elif domain == 'www.linkedin.com':
+            return 'https://www.vhv.rs/dpng/d/405-4051803_linkedin-logo-png-linkedin-logo-2020-png-transparent.png'
+
+
 
     def __str__(self):
         return f"{self.title} at {self.company}"

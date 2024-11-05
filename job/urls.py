@@ -8,6 +8,12 @@ from django.contrib.humanize.templatetags import humanize
 import boto3, datetime
 from job.jobs import models
 from job.search import find_job
+from urllib.parse import urlparse
+
+def get_domain(url):
+    parsed_url = urlparse(url)
+    domain = parsed_url.netloc  # Extract the domain
+    return domain
 
 
 def delete_dynamodb_item(table_name, item_id):

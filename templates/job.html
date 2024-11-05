@@ -113,8 +113,9 @@
                         <div class="d-flex flex-row align-items-start justify-content-between">
                             <div>
                                 <h6 style="margin: 0; padding: 0">
+
                                     <a style="text-decoration: none; color: black"
-                                       href="{{ job.job_url }}">{{ job.title }}</a></h6>
+                                       href="{{ job.job_url }}"><img src="{{ job.get_logo }}" style="width: 60px; margin: 12px; margin-left: 0; margin-top: 4px"/>{{ job.title }}</a></h6>
                                 <div class="text-capitalize text-secondary">{{ job.company }}</div>
                             </div>
                             <small>{{ job.date | naturaltime }}</small>
@@ -163,7 +164,8 @@
                                         class="{% if job.is_saved %}fas {% else %}fa-regular{% endif %} fa-bookmark"></i></a>
                             </div>
                         </div>
-{{ job.job_url }}
+
+
                     </div>
 
                 </div>
