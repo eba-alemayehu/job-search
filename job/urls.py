@@ -49,7 +49,7 @@ def get_all_items(key, applid, request,  saved=None, is_filtered=False, is_remot
 
     jobs = jobs.order_by('-created_at')
 
-    paginator = Paginator(jobs, 100)  # Show 10 objects per page
+    paginator = Paginator(jobs, 50)  # Show 10 objects per page
 
     # Get the current page number from the URL
     page_number = request.GET.get('page')
