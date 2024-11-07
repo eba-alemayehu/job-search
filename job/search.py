@@ -16,7 +16,7 @@ from job.jobs.models import JobListing, JobSearch, JobFilter
 def search(config, title, job_search, filters):
     jobs = scrape_jobs(
         site_name=["indeed", "linkedin", "zip_recruiter", "glassdoor"],
-        search_term=title,
+        search_term='"{}"'.format(title),
         results_wanted=100,
         country_indeed='USA',
         is_remote=True
