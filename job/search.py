@@ -3,7 +3,7 @@ from django.utils import timezone
 from jobspy import scrape_jobs
 import boto3
 from decimal import Decimal
-import yaml
+import yaml, threading
 from django.db.models import Q
 from boto3.dynamodb.conditions import Key
 from boto3.dynamodb.conditions import Attr
@@ -80,10 +80,16 @@ def find_job():
     with open('job/config.yaml', 'r') as file:
         config = yaml.safe_load(file)
 
-    jobs = []
     filters = JobFilter.objects.all()
+    threads = []
+
     for job_search in JobSearch.objects.all():
-        jobs += search(config, job_search.key_word, job_search, filters)
+        thread = threading.Thread(target=search, args=(config, job_search.key_word, job_search, filters))
+        threads.append(thread)
+        thread.start()
+
+    for thread in threads:
+        thread.join()
 
     print("Item inserted successfully!")
 
