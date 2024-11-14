@@ -8,6 +8,13 @@ services:
       - ${BACKEND_PORT}:8000
     volumes:
       - ${STATIC_DIR}:/app
+    environment:
+      - DEBUG=false
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=${POSTGRES_DB}
+      - DB_USERNAME=${POSTGRES_USER}
+      - DB_PASSWORD=${POSTGRES_PASSWORD}
     depends_on:
       - postgres
   nginx:
