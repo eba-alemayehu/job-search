@@ -8,7 +8,7 @@ ENV PYTHONUNBUFFERED=1
 RUN apt update && \
     apt install -y python3 python3-pip python3-dev libffi-dev g++ gcc musl-dev && \
     apt install -y libpq-dev python3-setuptools python3-reportlab libfreetype-dev wget git build-essential && \
-    apt install -y python3 python3-pip wget cron postgresql-dev
+    apt install -y python3 python3-pip wget cron postgresql postgresql-contrib
 RUN #pip install --upgrade pip
 
 WORKDIR /a
