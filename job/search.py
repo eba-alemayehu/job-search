@@ -24,7 +24,8 @@ def search(config, title, job_search, filters):
     print(f"Found {len(jobs)} jobs")
     jobs = jobs.to_dict(orient='records')
 
-    for job in jobs:
+    for i, job in enumerate(jobs):
+        print(i,job)
         job['date'] = datetime.datetime.now()
         job['job_search'] = job_search
         job['job_id'] = f"{job['date_posted']}-{job['company']}-{job['title']}"
