@@ -71,8 +71,8 @@ def search(config, title, job_search, filters, search_keys):
                 elif f.filter_type == 'KEY_WORD_NOT_IN_TITLE' and job.get('title') is not None:
                     if any(key.lower() in job['title'].lower() for key in search_keys):
                         job['job_filter'] = f
-
-            job_listing = JobListing.objects.create(**job)
+            data = {key: (value[:200] if isinstance(value, str) else value) for key, value in job.items()}
+            job_listing = JobListing.objects.create(**data)
             print(job_listing)
     return jobs
 
