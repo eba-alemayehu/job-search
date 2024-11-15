@@ -39,7 +39,7 @@ def search(config, title, job_search, filters, search_keys):
             elif isinstance(job[x], datetime.date):
                 job[x] = job[x].strftime("%Y-%m-%d %H:%M:%S")
 
-        if not JobListing.objects.filter(job_id=job['job_id'], job_filter__isnull=True).exists():
+        if not JobListing.objects.filter(job_id=job['job_id'], job_filter__isnull=True, is_remote=True).exists():
             del job['id']
             del job['company_revenue']
 
