@@ -13,7 +13,7 @@ from job.jobs.models import JobListing, JobSearch, JobFilter
 
 
 # @task
-def search(config, title, job_search, filters):
+def search(config, title, job_search, filters, search_keys):
     jobs = scrape_jobs(
         site_name=["indeed", "linkedin", "zip_recruiter", "glassdoor"],
         search_term='"{}"'.format(title),
@@ -68,8 +68,9 @@ def search(config, title, job_search, filters):
                     job['job_filter'] = f
                 elif f.filter_type == 'COMPANY_NAME' and job.get('company') and f.key_word.lower() in job['company'].lower():
                     job['job_filter'] = f
-                elif f.filter_type == 'KEY_WORD_NOT_IN_TITLE' and job.get('title') is not None and title.lower() not in job['title'].lower():
-                    job['job_filter'] = f
+                elif f.filter_type == 'KEY_WORD_NOT_IN_TITLE' and job.get('title') is not None:
+                    if any(key.lower() in job['title'].lower() for key in search_keys):
+                        job['job_filter'] = f
 
             job_listing = JobListing.objects.create(**job)
             print(job_listing)
@@ -81,10 +82,11 @@ def find_job():
         config = yaml.safe_load(file)
 
     filters = JobFilter.objects.all()
+    search_keys = list(map(lambda e: e[0], list(JobSearch.objects.values_list('key_word'))))
     threads = []
 
     for job_search in JobSearch.objects.all():
-        thread = threading.Thread(target=search, args=(config, job_search.key_word, job_search, filters))
+        thread = threading.Thread(target=search, args=(config, job_search.key_word, job_search, filters, search_keys))
         threads.append(thread)
         thread.start()
 
