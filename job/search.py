@@ -17,7 +17,7 @@ def search(config, title, job_search, filters):
     jobs = scrape_jobs(
         site_name=["indeed", "linkedin", "zip_recruiter", "glassdoor"],
         search_term='"{}"'.format(title),
-        results_wanted=1000,
+        results_wanted=120,
         country_indeed='USA',
         is_remote=True
     )
